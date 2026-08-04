@@ -9,7 +9,10 @@ import (
 	"github.com/metafates/mangal/source"
 )
 
-const CustomProviderExtension = ".lua"
+const (
+	CustomProviderExtension      = ".lua"
+	DeclarativeProviderExtension = ".toml"
+)
 
 var builtinProviders = []*Provider{
 	{
