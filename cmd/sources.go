@@ -96,7 +96,8 @@ func init() {
 
 		return lo.FilterMap(sources, func(item os.FileInfo, _ int) (string, bool) {
 			name := item.Name()
-			if !strings.HasSuffix(name, provider.CustomProviderExtension) {
+			if !strings.HasSuffix(name, provider.CustomProviderExtension) &&
+				!strings.HasSuffix(name, provider.DeclarativeProviderExtension) {
 				return "", false
 			}
 
@@ -105,12 +106,34 @@ func init() {
 	}))
 }
 
+// customSourceExtensions lists every file extension a custom source may be
+// stored under. Kept in one place so `sources remove` and its completion
+// function can't drift apart again.
+var customSourceExtensions = []string{
+	provider.CustomProviderExtension,
+	provider.DeclarativeProviderExtension,
+}
+
+// findCustomSourcePath locates the on-disk file for a custom source name,
+// trying each known custom source extension in turn.
+func findCustomSourcePath(name string) (string, error) {
+	for _, ext := range customSourceExtensions {
+		path := filepath.Join(where.Sources(), name+ext)
+		if exists, err := filesystem.Api().Exists(path); err == nil && exists {
+			return path, nil
+		}
+	}
+
+	return "", fmt.Errorf("no custom source named %q found", name)
+}
+
 var sourcesRemoveCmd = &cobra.Command{
 	Use:   "remove",
 	Short: "Remove a custom source",
 	Run: func(cmd *cobra.Command, args []string) {
 		for _, name := range lo.Must(cmd.Flags().GetStringArray("name")) {
-			path := filepath.Join(where.Sources(), name+provider.CustomProviderExtension)
+			path, err := findCustomSourcePath(name)
+			handleErr(err)
 			handleErr(filesystem.Api().Remove(path))
 			fmt.Printf("%s successfully removed %s\n", icon.Get(icon.Success), style.Fg(color.Yellow)(name))
 		}
