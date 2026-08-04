@@ -316,3 +316,6 @@ Temporary Items
 .apdisk
 
 dist/
+
+# Subagent-driven development scratch workspace
+.superpowers/
