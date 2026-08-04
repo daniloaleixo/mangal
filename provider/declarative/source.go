@@ -75,11 +75,28 @@ func (s *Source) ID() string { return s.id }
 // by a fuzzy match against the query. An empty query returns everything.
 func (s *Source) Search(query string) ([]*source.Manga, error) {
 	if s.static == nil {
-		return s.inner.Search(query)
+		mangas, err := s.inner.Search(query)
+		if err != nil {
+			return nil, err
+		}
+
+		// generic.New stamps Source with the raw *generic.Scraper it builds
+		// (see provider/generic/new.go), so every manga returned here still
+		// points at s.inner instead of this decorator. Re-point it so IDs,
+		// history, and error messages all see the " toml" suffix rather than
+		// generic's hardcoded " built-in". The inner scraper caches these
+		// *source.Manga values, so this is idempotent and safe to repeat.
+		for _, manga := range mangas {
+			manga.Source = s
+		}
+
+		return mangas, nil
 	}
 
 	if strings.TrimSpace(query) == "" {
-		return s.static, nil
+		found := make([]*source.Manga, len(s.static))
+		copy(found, s.static)
+		return found, nil
 	}
 
 	found := make([]*source.Manga, 0, len(s.static))
@@ -99,7 +116,10 @@ func (s *Source) ChaptersOf(manga *source.Manga) ([]*source.Chapter, error) {
 	}
 
 	if len(chapters) == 0 {
-		return nil, fmt.Errorf("no chapters found at %s, check the [chapters] selector", manga.URL)
+		return nil, fmt.Errorf(
+			"no chapters found at %s, check the [chapters] selector (or the URL may have redirected)",
+			manga.URL,
+		)
 	}
 
 	return chapters, nil

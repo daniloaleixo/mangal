@@ -92,11 +92,19 @@ selector = "div.reader img"
 			So(mangas, ShouldHaveLength, 1)
 			So(mangas[0].Name, ShouldEqual, "Alpha")
 
+			Convey("Then the manga points back at the decorator, not the inner generic scraper", func() {
+				So(mangas[0].Source.ID(), ShouldEqual, src.ID())
+			})
+
 			Convey("And its chapters are listed in reverse", func() {
 				chapters, err := src.ChaptersOf(mangas[0])
 				So(err, ShouldBeNil)
 				So(chapters, ShouldHaveLength, 2)
 				So(chapters[0].Name, ShouldEqual, "Chapter 1")
+
+				Convey("Then the chapter's manga also points back at the decorator", func() {
+					So(chapters[0].Source().ID(), ShouldEqual, src.ID())
+				})
 
 				Convey("And its pages resolve, with the regex applied", func() {
 					pages, err := src.PagesOf(chapters[0])
