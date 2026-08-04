@@ -281,6 +281,54 @@ It should automatically appear in the list of available scrapers.
 
 > New to Lua? [Quick start guide](https://learnxinyminutes.com/docs/lua/)
 
+## Declarative scrapers
+
+For sites that serve plain HTML, a scraper can be a TOML file instead of Lua —
+no code and no rebuild. Drop it into `mangal where --sources` and the source
+appears under the file's name.
+
+    cp theclimber.toml "$(mangal where --sources)/"
+
+A single-series site, with no catalog to search:
+
+```toml
+base_url         = "https://theclimber.club"
+reverse_chapters = true
+
+[[manga]]
+name = "The Climber"
+url  = "https://theclimber.club/"
+
+[chapters]
+selector = "#chapters-list-holder a.chapter-list-item"
+  [chapters.name]
+  selector = "span.chapter-name"  # no attr means the element's text
+  [chapters.url]
+  attr = "href"
+
+[pages]
+selector = "img[src*='/manga/']"
+  [pages.url]
+  attr = "src"
+```
+
+A site with a catalog uses `search_url` and `[search]` instead of `[[manga]]`,
+where `{query}` is replaced with the URL-escaped search term.
+
+Each field accepts four optional keys: `selector` (a sub-selector within the
+matched item), `attr` (the attribute to read, defaulting to the element's
+text), `regex`, and `replace`. With `regex` alone, capture group 1 is taken;
+with `replace`, a substitution is applied. Values are always trimmed.
+
+Unknown keys are rejected, so a typo fails loudly rather than silently matching
+nothing.
+
+Sites that build their reader in JavaScript cannot be scraped this way — colly
+does not execute JS. Those still need a Lua source, which has headless Chrome
+available.
+
+See `assets/examples/theclimber.toml` for a complete example.
+
 ## Anilist
 
 Mangal also supports integration with anilist.

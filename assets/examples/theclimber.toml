@@ -1,0 +1,26 @@
+# theclimber.club — a single-series site with no catalog to search.
+#
+# Install with:
+#   cp theclimber.toml "$(mangal where --sources)/"
+#
+# The source will appear as "theclimber".
+
+base_url         = "https://theclimber.club"
+reverse_chapters = true          # the site lists newest chapters first
+
+[[manga]]
+name  = "The Climber"
+url   = "https://theclimber.club/"
+cover = "https://theclimber.club/wp-content/uploads/2024/07/The-Climber.jpg"
+
+[chapters]
+selector = "#chapters-list-holder a.chapter-list-item"
+  [chapters.name]
+  selector = "span.chapter-name"
+  [chapters.url]
+  attr = "href"
+
+[pages]
+selector = "img[src*='/manga/']"
+  [pages.url]
+  attr = "src"
