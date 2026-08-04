@@ -234,7 +234,7 @@ No live test against `theclimber.club`. The existing provider tests already scra
 
 **Selectors are unverified.** The example config's selectors must be written against raw HTML fetched during implementation. The design was informed by a summarized rendering of those pages, not the markup itself, so the first implementation task is fetching the homepage and one chapter page and confirming the actual element structure.
 
-**Chapter numbering gaps.** `theclimber.club` lists chapters with gaps (no 17, 20, 24, and others). mangal's default filename template is `[{padded-index}] {chapter}`, so downloaded files are numbered contiguously while chapter names retain the real numbers. This is existing mangal behavior, not something this design changes. Users who find it confusing can set `downloader.chapter_name_template = "{chapter}"`.
+**Chapter numbering.** An earlier draft of this spec claimed `theclimber.club` lists chapters with gaps (no 17, 20, 24, and others) and recommended overriding `downloader.chapter_name_template` because of it. That was wrong — it came from a summarized rendering of the page rather than the markup. Verified against the live site during implementation: the chapter list is contiguous, 1 through 170, in ascending order once `reverse_chapters` is applied. Index and chapter number agree, so the default `[{padded-index}] {chapter}` template needs no override.
 
 ## Open Question
 
