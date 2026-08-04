@@ -21,6 +21,10 @@ selector = "#chapters-list-holder a.chapter-list-item"
   attr = "href"
 
 [pages]
-selector = "img[src*='/manga/']"
+# Pages are served from more than one CDN host (seen: official.lowee.us and
+# scans.lastation.us, varying by chapter), but both share the series path
+# segment "/Kokou-No-Hito/". Key on that instead of the host, and resist the
+# urge to narrow this to a single hostname — it will break on other chapters.
+selector = "p img[src*='/Kokou-No-Hito/']"
   [pages.url]
   attr = "src"

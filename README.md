@@ -36,6 +36,7 @@ curl -sSL mangal.metafates.one/run | sh
 - [Usage](#usage)
 - [Configuration](#configuration)
 - [Custom scrapers](#custom-scrapers)
+- [Declarative scrapers](#declarative-scrapers)
 - [Anilist](#anilist)
 - [Honorable mentions](#honorable-mentions)
 
@@ -307,7 +308,9 @@ selector = "#chapters-list-holder a.chapter-list-item"
   attr = "href"
 
 [pages]
-selector = "img[src*='/manga/']"
+# theclimber.club serves pages from more than one CDN host depending on the
+# chapter, but both share the "/Kokou-No-Hito/" series path segment.
+selector = "p img[src*='/Kokou-No-Hito/']"
   [pages.url]
   attr = "src"
 ```
@@ -317,8 +320,9 @@ where `{query}` is replaced with the URL-escaped search term.
 
 Each field accepts four optional keys: `selector` (a sub-selector within the
 matched item), `attr` (the attribute to read, defaulting to the element's
-text), `regex`, and `replace`. With `regex` alone, capture group 1 is taken;
-with `replace`, a substitution is applied. Values are always trimmed.
+text), `regex`, and `replace`. With `regex` alone, capture group 1 is taken,
+or the whole match if the pattern has no capturing group; with `replace`, a
+substitution is applied. Values are always trimmed.
 
 Unknown keys are rejected, so a typo fails loudly rather than silently matching
 nothing.
