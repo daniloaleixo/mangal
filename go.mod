@@ -19,6 +19,7 @@ require (
 	github.com/metafates/mangal-lua-libs v0.5.0
 	github.com/muesli/reflow v0.3.0
 	github.com/pdfcpu/pdfcpu v0.3.13
+	github.com/pelletier/go-toml/v2 v2.0.9
 	github.com/samber/lo v1.37.0
 	github.com/samber/mo v1.7.0
 	github.com/sirupsen/logrus v1.9.0
@@ -70,7 +71,6 @@ require (
 	github.com/muesli/cancelreader v0.2.2 // indirect
 	github.com/muesli/termenv v0.13.0 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
-	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rivo/uniseg v0.4.3 // indirect
 	github.com/sahilm/fuzzy v0.1.0 // indirect

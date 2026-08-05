@@ -75,10 +75,16 @@ func (t *listItem) Description() (description string) {
 		description = fmt.Sprintf("%s : %d / %d", e.Name, e.Index, e.MangaChaptersTotal)
 	case *provider.Provider:
 		sb := strings.Builder{}
-		if e.IsCustom {
-			sb.WriteString("Custom")
-		} else {
+		switch {
+		case !e.IsCustom:
 			sb.WriteString("Builtin")
+		case strings.HasSuffix(e.ID, " toml"):
+			// Declarative TOML sources and Lua sources can share a name
+			// (same file stem, different extension); the ID suffix is the
+			// only thing that tells them apart, so surface it here too.
+			sb.WriteString("Custom (toml)")
+		default:
+			sb.WriteString("Custom (lua)")
 		}
 
 		if e.UsesHeadless {
